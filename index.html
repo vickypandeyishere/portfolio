@@ -28,10 +28,11 @@ MEDIA RULES
   - Upload reels as MP4, under 25 MB each (compress with HandBrake if needed).
   - Duplicate files are hidden automatically (same file content = shown once).
 
-PERFORMANCE IDEAS FOR LATER
-  [ ] Convert PNG graphics to WebP (much smaller files, same look)
+PERFORMANCE
+  - Phones and slower computers automatically get "lite mode" (class "lite" on <html>):
+    lighter clouds, no blur effects, no heavy shadows, animations pause when off-screen.
+  [ ] Convert PNG images to WebP with squoosh.app (much smaller, same look), then update FILES
   [ ] Add poster images for reels so they show instantly
-  [ ] Compress the cover and about images (tinypng.com or squoosh.app)
 
 SETTINGS CHEAT-SHEET (see top of the script)
   CAR_FACES       "right" = car nose points right (drives left → right)
@@ -56,6 +57,13 @@ SETTINGS CHEAT-SHEET (see top of the script)
 <meta property="og:description" content="Strategy-led social media for brands in Saudi Arabia, the US, the UK, and India.">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/vickypandeyishere/portfolio@main/Social%20Media%20COver%20image.png">
 <meta name="theme-color" content="#060a14">
+
+<!-- Lite mode for phones / slower devices (runs before anything is drawn) -->
+<script>
+if(matchMedia('(max-width: 900px), (pointer: coarse)').matches || (navigator.hardwareConcurrency||8) <= 4){
+  document.documentElement.classList.add('lite');
+}
+</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -109,6 +117,7 @@ body.has-cursor.ready .cur-dot,body.has-cursor.ready .cur-ring{opacity:1}
 .sky .f1{width:55vw;height:35vh;left:-10vw;top:10vh}
 .sky .f2{width:45vw;height:30vh;right:-10vw;top:55vh;animation-duration:36s;animation-delay:-10s;background:rgba(79,209,255,.06)}
 .sky .f3{width:40vw;height:30vh;left:35vw;top:30vh;animation-duration:44s;background:rgba(255,61,127,.045)}
+.sky .f4,.sky .f5{display:none}
 @keyframes drift{to{transform:translate(8vw,-5vh) scale(1.2)}}
 body::after{content:"";position:fixed;inset:0;z-index:999;pointer-events:none;opacity:.05;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
@@ -296,7 +305,6 @@ section.block{padding:130px 0;position:relative}
 .wd{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.12em;margin-bottom:-.12em}
 .wd>span{display:inline-block;transform:translateY(110%);transition:transform 1s var(--ease)}
 .split.in .wd>span{transform:none}
-/* Paragraphs: plain, evenly coloured text (no highlighting) */
 .hl{color:var(--body);font-size:clamp(1rem,1.3vw,1.08rem);line-height:1.85;font-weight:400}
 .hl b{font-weight:inherit;color:inherit}
 
@@ -480,6 +488,32 @@ footer{border-top:1px solid var(--line);text-align:center;padding:26px 26px 80px
   .lb-prev,.lb-next{top:auto;bottom:16px;transform:none}
 }
 @media(max-width:560px){ .process-grid{grid-template-columns:1fr} }
+
+/* ============ LITE MODE (phones & slower devices) ============
+   Same look, much lighter work for the device. */
+html.lite .sky .layer{display:none}
+html.lite .sky .fog{filter:none;border-radius:50%;background:radial-gradient(closest-side,rgba(160,185,230,.2),rgba(160,185,230,0));will-change:transform}
+html.lite .sky .f2{background:radial-gradient(closest-side,rgba(79,209,255,.13),rgba(79,209,255,0))}
+html.lite .sky .f3{background:radial-gradient(closest-side,rgba(255,61,127,.1),rgba(255,61,127,0))}
+html.lite .sky .f4{display:block;width:90vw;height:45vh;left:-20vw;top:62vh;animation-duration:40s;animation-delay:-14s}
+html.lite .sky .f5{display:block;width:80vw;height:40vh;right:-25vw;top:-8vh;animation-duration:34s;animation-delay:-6s}
+html.lite body::after{display:none}
+html.lite nav.solid,html.lite .sound,html.lite #gate,html.lite .reel .play,html.lite .badge{-webkit-backdrop-filter:none;backdrop-filter:none}
+html.lite nav.solid{background:rgba(6,10,20,.95)}
+html.lite .sound{background:rgba(10,16,30,.94)}
+html.lite #gate{background:rgba(3,5,10,.85)}
+html.lite .reel .play{background:rgba(10,16,30,.6)}
+html.lite .reel .play::after{display:none}
+html.lite .piece{filter:none}
+html.lite .about-halo{filter:none;background:radial-gradient(closest-side,rgba(79,209,255,.16),rgba(79,209,255,0))}
+html.lite .glow{filter:none;background:radial-gradient(closest-side,rgba(255,61,127,.5),rgba(79,209,255,0))}
+html.lite .reflect{filter:none}
+html.lite .reel,html.lite .gfx-inner,html.lite .orb,html.lite .trail{box-shadow:none}
+html.lite .journey .prog,html.lite .process-line i,html.lite .bar i,html.lite .jstep.lit::before{box-shadow:none}
+html.lite .tagline .w{filter:none}
+html.lite .rise{transform:translateY(50px)}
+html.lite .off,html.lite .off *{animation-play-state:paused!important}
+
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -489,12 +523,12 @@ footer{border-top:1px solid var(--line);text-align:center;padding:26px 26px 80px
 <div class="cur-dot" id="curDot"></div>
 <div class="cur-ring" id="curRing"><span id="curLabel"></span></div>
 
-<!-- 3D cloud background -->
+<!-- 3D cloud background (phones use the lighter fog blobs only) -->
 <div class="sky" aria-hidden="true">
   <div class="layer l-far" data-depth=".04"><svg preserveAspectRatio="none"><filter id="cA"><feTurbulence type="fractalNoise" baseFrequency=".003 .007" numOctaves="4" seed="2"/><feColorMatrix values="0 0 0 0 .62  0 0 0 0 .72  0 0 0 0 .9  0 0 0 1 -.38"/></filter><rect width="100%" height="100%" filter="url(#cA)"/></svg></div>
   <div class="layer l-mid" data-depth=".1"><svg preserveAspectRatio="none"><filter id="cB"><feTurbulence type="fractalNoise" baseFrequency=".005 .011" numOctaves="4" seed="9"/><feColorMatrix values="0 0 0 0 .72  0 0 0 0 .8  0 0 0 0 .95  0 0 0 1 -.42"/></filter><rect width="100%" height="100%" filter="url(#cB)"/></svg></div>
   <div class="layer l-near" data-depth=".2"><svg preserveAspectRatio="none"><filter id="cC"><feTurbulence type="fractalNoise" baseFrequency=".008 .016" numOctaves="3" seed="21"/><feColorMatrix values="0 0 0 0 .8  0 0 0 0 .85  0 0 0 0 .98  0 0 0 1 -.48"/></filter><rect width="100%" height="100%" filter="url(#cC)"/></svg></div>
-  <div class="fog f1"></div><div class="fog f2"></div><div class="fog f3"></div>
+  <div class="fog f1"></div><div class="fog f2"></div><div class="fog f3"></div><div class="fog f4"></div><div class="fog f5"></div>
 </div>
 
 <!-- ============ LOADER ============ -->
@@ -689,6 +723,7 @@ footer{border-top:1px solid var(--line);text-align:center;padding:26px 26px 80px
   EDITOR NOTES (script)
   - Everything you'll usually edit is in SETTINGS and PROJECTS just below.
   - Media for each project loads live from the GitHub folder whose name matches "match".
+  - LITE mode (phones / slower devices) is switched on automatically in the <head>.
   - TODO (full digital marketing version):
       • Add projects for SEO, Google Ads, and landing page work using the same PROJECTS format.
       • Add an optional "results" field per project, e.g. results:[["Reach","+X%"]], and render it as stat cards.
@@ -765,6 +800,7 @@ const PROJECTS = [
 (() => {
   const $ = id => document.getElementById(id);
   const pad = n => String(n).padStart(2,'0');
+  const LITE = document.documentElement.classList.contains('lite');
   const CDN = `https://cdn.jsdelivr.net/gh/${OWNER}/${REPO}@${BRANCH}/`;
   const BASE = location.hostname.endsWith("github.io") ? "" : CDN;
   const url = f => BASE + f.split('/').map(encodeURIComponent).join('/');
@@ -896,7 +932,7 @@ const PROJECTS = [
     if(D===-1){ t.style.left=rearCfg.x+'%'; t.style.background=`linear-gradient(90deg,#fff,${i?'var(--c2)':'var(--c1)'} 20%,transparent)`; }
     else { t.style.right=(100-rearCfg.x)+'%'; t.style.background=`linear-gradient(270deg,#fff,${i?'var(--c2)':'var(--c1)'} 20%,transparent)`; }
   });
-  for(let i=0;i<34;i++){
+  for(let i=0;i<(LITE?16:34);i++){
     const d=document.createElement('div');
     d.className='streak'+(Math.random()<.35?' pink':'');
     d.style.top=(15+Math.random()*55)+'%';
@@ -914,16 +950,19 @@ const PROJECTS = [
   addEventListener('resize',()=>{ if(!launched){ placeCar(startX()); placeStartLine(); } });
 
   function setSpin(s){ frame.style.setProperty('--spin', s+'s'); }
+  let dustCount=0; const DUST_MAX = LITE ? 40 : 120;
   function spawnDust(boost){
-    const r=rearWheel.getBoundingClientRect(), L=loader.getBoundingClientRect();
+    if(dustCount>=DUST_MAX) return;
+    const r=rearWheel.getBoundingClientRect();
     const p=document.createElement('div'); p.className='dust';
-    const x=r.left - L.left + r.width/2 + (Math.random()-.5)*r.width*.4, y=r.bottom - L.top - r.height*.15;
+    const x=r.left + r.width/2 + (Math.random()-.5)*r.width*.4, y=r.bottom - r.height*.15;
     p.style.setProperty('--x',x+'px'); p.style.setProperty('--y',y+'px');
     p.style.setProperty('--dx',(-D)*((boost?40:70)+Math.random()*(boost?80:140))+'px');
     p.style.setProperty('--dy',-(8+Math.random()*(boost?30:45))+'px');
     p.style.setProperty('--sc',(boost?5:4)+Math.random()*4);
     p.style.setProperty('--dur',(boost?1.4:1)+Math.random()*.8+'s');
-    dustLayer.appendChild(p); setTimeout(()=>p.remove(),2400);
+    dustLayer.appendChild(p); dustCount++;
+    setTimeout(()=>{ p.remove(); dustCount--; },2400);
   }
 
   let finished=false, started=false, timers=[], dustTimer, intensity=.2, boostRaf;
@@ -939,19 +978,20 @@ const PROJECTS = [
   function rev(){
     carBody.classList.remove('rev'); void carBody.offsetWidth; carBody.classList.add('rev');
     pct.classList.remove('kick'); void pct.offsetWidth; pct.classList.add('kick');
-    for(let i=0;i<6;i++) spawnDust(false);
+    for(let i=0;i<(LITE?3:6);i++) spawnDust(false);
   }
   function launch(){
     launched=true; clearInterval(dustTimer);
     loader.classList.add('boost','shake'); car.classList.add('speeding');
     flash.classList.add('on'); hud.classList.add('hide'); setSpin(.06);
     const x0=carX, x1=D*(innerWidth/2 + W()/2 + 160), t0=performance.now(), dur=1050;
-    let shown=false;
+    let shown=false, f=0;
     (function frameStep(now){
       const k=Math.min((now-t0)/dur,1), e=k*k*k;
       const x=x0+(x1-x0)*e; placeCar(x);
       const len=Math.abs(x-x0)+W()*.1; t1.style.width=len+'px'; t2.style.width=len*.85+'px';
-      spawnDust(true); if(k>.15) spawnDust(true);
+      if(!LITE || (f++ % 2 === 0)) spawnDust(true);
+      if(!LITE && k>.15) spawnDust(true);
       if(!shown && k>.7){ shown=true; tagline.classList.add('show'); }
       if(k<1) boostRaf=requestAnimationFrame(frameStep);
       else { [t1,t2].forEach(t=>{ t.style.transition='opacity .8s'; t.style.opacity=0; }); later(finish,2100); }
@@ -962,7 +1002,7 @@ const PROJECTS = [
     if(withSound){ engine.src=url(FILES.engine); engine.play().catch(()=>{}); ensureMusic(); }
     $('gate').classList.add('off'); loader.classList.add('running');
     setSpin(1.1);
-    dustTimer=setInterval(()=>{ if(Math.random()<intensity) spawnDust(false); },55);
+    dustTimer=setInterval(()=>{ if(Math.random()<intensity*(LITE?.5:1)) spawnDust(false); },LITE?90:55);
     const DUR=2800, revs=[35,65,90];
     later(()=>{
       const t0=performance.now();
@@ -992,6 +1032,7 @@ const PROJECTS = [
   const layers=[...document.querySelectorAll('.sky .layer')], nav=$('nav'), prog=$('progress');
   let mx=0,my=0,lastY=0,ticking=false;
   function parallax(){
+    if(LITE) return;                       // phones: skip cloud parallax (biggest lag source)
     const s=scrollY;
     layers.forEach(l=>{ const d=+l.dataset.depth; l.style.transform=`translate3d(${mx*d*-120}px,${-s*d+my*d*-80}px,0) scale(${1+d*.6})`; });
   }
@@ -1014,18 +1055,24 @@ const PROJECTS = [
   }
   addEventListener('scroll',()=>{ if(!ticking){ ticking=true; requestAnimationFrame(onScroll); } },{passive:true});
 
-  /* ---------- MOUSE ---------- */
+  /* Phones: pause animations in the hero and About when they're off-screen */
+  if(LITE){
+    const pio=new IntersectionObserver(es=>es.forEach(en=>en.target.classList.toggle('off',!en.isIntersecting)));
+    [$('home'),$('about')].forEach(el=>pio.observe(el));
+  }
+
+  /* ---------- MOUSE (desktop only) ---------- */
   const bg=$('heroBg'), objs=$('objs'), dot=$('curDot'), ring=$('curRing'), lab=$('curLabel');
   let cx=innerWidth/2, cy=innerHeight/2, rx=cx, ry=cy, mTick=false;
-  addEventListener('mousemove',e=>{
-    mx=e.clientX/innerWidth-.5; my=e.clientY/innerHeight-.5; cx=e.clientX; cy=e.clientY;
-    if(!mTick){ mTick=true; requestAnimationFrame(()=>{
-      bg.style.transform=`translate(${mx*-14}px,${my*-10}px)`;
-      objs.style.transform=`translate(${mx*30}px,${my*24}px)`;
-      parallax(); mTick=false;
-    }); }
-  });
   if(fine){
+    addEventListener('mousemove',e=>{
+      mx=e.clientX/innerWidth-.5; my=e.clientY/innerHeight-.5; cx=e.clientX; cy=e.clientY;
+      if(!mTick){ mTick=true; requestAnimationFrame(()=>{
+        bg.style.transform=`translate(${mx*-14}px,${my*-10}px)`;
+        objs.style.transform=`translate(${mx*30}px,${my*24}px)`;
+        parallax(); mTick=false;
+      }); }
+    });
     document.body.classList.add('has-cursor');
     (function loop(){ rx+=(cx-rx)*.18; ry+=(cy-ry)*.18; dot.style.transform=`translate(${cx}px,${cy}px)`; ring.style.transform=`translate(${rx}px,${ry}px)`; requestAnimationFrame(loop); })();
     document.addEventListener('mouseover',e=>{
@@ -1035,11 +1082,11 @@ const PROJECTS = [
       if(t.dataset && t.dataset.cursor){ ring.classList.add('label'); lab.textContent=t.dataset.cursor; }
       else ring.classList.add('hover');
     });
+    document.querySelectorAll('.magnetic').forEach(b=>{
+      b.addEventListener('mousemove',e=>{ const r=b.getBoundingClientRect(); b.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.25}px,${(e.clientY-r.top-r.height/2)*.35}px)`; });
+      b.addEventListener('mouseleave',()=>b.style.transform='');
+    });
   }
-  if(fine) document.querySelectorAll('.magnetic').forEach(b=>{
-    b.addEventListener('mousemove',e=>{ const r=b.getBoundingClientRect(); b.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.25}px,${(e.clientY-r.top-r.height/2)*.35}px)`; });
-    b.addEventListener('mouseleave',()=>b.style.transform='');
-  });
   function tilt(wrapper,target,amount=14){
     if(!fine) return;
     wrapper.addEventListener('mousemove',e=>{
@@ -1098,7 +1145,7 @@ const PROJECTS = [
   const vidIO=new IntersectionObserver(es=>es.forEach(en=>{
     if(!en.isIntersecting) return;
     const v=en.target; v.preload='metadata'; v.src=v.dataset.src; vidIO.unobserve(v);
-  }),{rootMargin:'500px 0px'});
+  }),{rootMargin: LITE ? '150px 0px' : '500px 0px'});
 
   function buildReel(path,i,name){
     const fig=document.createElement('figure'); fig.className='reel rise'; fig.dataset.cursor='PLAY';
